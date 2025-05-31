@@ -31,7 +31,7 @@ namespace MvcTodoApp.Controllers
         {
             if (!string.IsNullOrEmpty(title))
             {
-                int newId = tasks.Max(t => t.Id) + 1;
+                int newId = tasks.Any() ? tasks.Max(t => t.Id) + 1 : 1;
                 var newTask = new TaskItem { Id = newId, Title = title, IsComplete = false };
                 tasks.Add(newTask);
             }
@@ -48,6 +48,28 @@ namespace MvcTodoApp.Controllers
             if (task != null)
                 task.IsComplete = true;
             return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// تحديث عنوان مهمة موجودة.
+        /// </summary>
+        [HttpPost]
+        public IActionResult UpdateTask(int id, string newTitle)
+        {
+            var task = tasks.FirstOrDefault(t => t.Id == id);
+            if (task != null && !string.IsNullOrEmpty(newTitle))
+            {
+                task.Title = newTitle;
+            }
+            return RedirectToAction("Index");
+        }
+
+        /// <summary>
+        /// استرجاع قائمة المهام.
+        /// </summary>
+        public IActionResult GetTasks()
+        {
+            return Json(tasks);
         }
     }
 }
